@@ -44,7 +44,7 @@ echo json_encode([
     "resumo" => obterResumoPerfil($pdo, $id)
 ]);
 
-function obterResumoPerfil($pdo, $usuarioId) {
+function obterResumoPerfil(PDO $pdo, int $usuarioId): array {
     $sql = "SELECT COUNT(DISTINCT p.id) AS total_projetos,
                    COALESCE(SUM(CASE
                        WHEN st.finalizado_em IS NULL THEN TIMESTAMPDIFF(SECOND, st.iniciado_em, NOW())
