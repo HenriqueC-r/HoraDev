@@ -1,0 +1,37 @@
+services:
+  app:
+    build: .
+    container_name: horadev-app
+    ports:
+      - "8000:80"
+    volumes:
+      - ./.env:/var/www/html/.env:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.4
+    container_name: horadev-db
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:?Defina DB_NAME no .env}
+      MYSQL_USER: ${DB_USER:?Defina DB_USER no .env}
+      MYSQL_PASSWORD: ${DB_PASS:?Defina DB_PASS no .env}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS:?Defina DB_ROOT_PASS no .env}
+    volumes:
+      - horadev_mysql:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/01-database.sql:ro
+    ports:
+      - "127.0.0.1:3307:3306"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'mysqladmin ping -h localhost -u root -p"$$MYSQL_ROOT_PASSWORD" --silent'
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  horadev_mysql:

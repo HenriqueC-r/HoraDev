@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . "/../../config/cors.php";
-require_once __DIR__ . "/../../config/verificarToken.php";
-require_once __DIR__ . "/../../conexao.php";
+require_once __DIR__ . "/../../../config/cors.php";
+require_once __DIR__ . "/../../../config/verificarToken.php";
+require_once __DIR__ . "/../../../conexao.php";
 
 if ($_SERVER["REQUEST_METHOD"] !== "GET") {
     http_response_code(405);
