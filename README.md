@@ -1,27 +1,197 @@
-# HoraDev
 
-Plataforma para desenvolvedores terem controle de seus projetos.
+# HoraDev 🚀
 
-> ⚠️ **Projeto em desenvolvimento.** Este é um projeto de estudo, construído aos poucos enquanto aprendo. Ainda estou testando ideias e decisões, então a estrutura pode mudar bastante até chegar num formato final.
+API para gerenciamento de projetos e acompanhamento de tempo de desenvolvimento.
 
-## O que é o HoraDev
+O **HoraDev** é um projeto desenvolvido para praticar desenvolvimento backend com PHP, autenticação JWT, banco de dados MySQL, APIs REST e Docker.
 
-O HoraDev é uma plataforma pensada para devs organizarem seus próprios projetos: acompanhar o que está em andamento, registrar o progresso e ter uma visão central de tudo o que se está construindo — seja um projeto pessoal, freelance ou de estudo.
+## ✨ Funcionalidades
 
-A ideia surgiu de uma necessidade bem prática: como dev, é fácil acabar com vários projetos espalhados, sem um lugar único pra acompanhar o andamento de cada um. O HoraDev busca resolver isso, dando um espaço simples onde o desenvolvedor cadastra seus projetos e acompanha a evolução deles.
+- Cadastro e autenticação de usuários
+- Autenticação baseada em JWT
+- Consulta de perfil autenticado
+- Criação e listagem de projetos
+- Controle de sessões de tempo por projeto
+- Início e encerramento de cronômetros
+- Cálculo do tempo acumulado em cada projeto
+- Ambiente conteinerizado com Docker Compose
 
-O nome carrega também uma ideia futura: além de organizar os projetos, a plataforma pretende ajudar o dev a entender quanto tempo (quantas "horas dev") está de fato dedicando a cada um.
+## 🛠️ Tecnologias
 
-## De onde veio a base
+- PHP 8.3
+- MySQL 8.4
+- Apache
+- Docker e Docker Compose
+- JWT (JSON Web Token)
+- PDO
+- Insomnia para testes da API
 
-Para não começar do zero, reaproveitei o sistema de autenticação do [Login-System-PHP](https://github.com/HenriqueC-r/Login-System-PHP), projeto que desenvolvi em conjunto com a [Mirian](https://github.com/mirianrl) como parte de uma avaliação técnica. Naquele projeto, eu cuidei do backend em PHP (autenticação segura, com PDO, password_hash, JWT e proteção CSRF) enquanto a Mirian desenvolveu o frontend em Vue.js/Quasar.
+## 📋 Pré-requisitos
 
-Aquele sistema de login serviu como ponto de partida sólido pro HoraDev: em vez de reconstruir autenticação, pude focar direto no que é o core da plataforma — o controle de projetos em si, começando pelo cadastro e listagem.
+- Docker
+- Docker Compose
+- Git
+- Insomnia ou outra ferramenta para testar APIs
 
-## Onde o projeto está agora
+## 🚀 Como executar
 
-O HoraDev ainda está nos primeiros passos: a autenticação já está reaproveitada e funcionando, e o módulo de projetos está começando a ganhar forma, com as primeiras funcionalidades de criar e listar projetos. A ideia é ir evoluindo aos poucos — testando, ajustando e aprendendo no processo — até chegar numa plataforma completa de gestão de projetos para devs.
+### 1. Clone o repositório
 
-## Autor
+```bash
+git clone https://github.com/HenriqueC-r/HoraDev.git
+cd HoraDev
+```
 
-Desenvolvido por [Henrique (HenriqueC-r)](https://github.com/HenriqueC-r), estudante de Engenharia de Software e desenvolvedor backend.
+### 2. Configure as variáveis de ambiente
+
+Configure o arquivo `.env` com as credenciais do banco de dados e a chave secreta do JWT.
+
+Não compartilhe credenciais reais nem publique o arquivo `.env` no GitHub.
+
+### 3. Inicie a aplicação
+
+```bash
+docker compose up --build -d
+```
+
+### 4. Verifique se a API está online
+
+Acesse:
+
+```text
+http://localhost:8000/api/index.php
+```
+
+Resposta esperada:
+
+```json
+{
+  "status": true,
+  "mensagem": "API online"
+}
+```
+
+### 5. Verifique os containers
+
+```bash
+docker compose ps
+```
+
+Para acompanhar os logs:
+
+```bash
+docker compose logs -f app
+```
+
+## 🔌 Endpoints da API
+
+URL base:
+
+```text
+http://localhost:8000/api
+```
+
+### Autenticação e perfil
+
+| Método | Endpoint | Descrição | Autenticação |
+|--------|----------|-----------|--------------|
+| GET | `/index.php` | Verifica se a API está online | Não |
+| POST | `/cadastro.php` | Cadastra um usuário | Não |
+| POST | `/login.php` | Autentica um usuário | Não |
+| GET | `/perfil.php` | Consulta o perfil do usuário | JWT |
+
+### Gerenciamento de projetos
+
+| Método | Endpoint | Descrição | Autenticação |
+|--------|----------|-----------|--------------|
+| POST | `/projetos/criar.php` | Cria um projeto | JWT |
+| GET | `/projetos/listar.php` | Lista os projetos do usuário autenticado | JWT |
+
+### Controle de tempo
+
+| Método | Endpoint | Descrição | Autenticação |
+|--------|----------|-----------|--------------|
+| POST | `/tempo/iniciar.php` | Inicia o cronômetro de um projeto | JWT |
+| POST | `/tempo/parar.php` | Encerra o cronômetro de um projeto | JWT |
+
+## 🔐 Autenticação JWT
+
+As rotas protegidas exigem um token JWT válido.
+
+Após realizar o login, utilize o token retornado na resposta da API.
+
+Adicione o seguinte cabeçalho HTTP às requisições autenticadas:
+
+```http
+Authorization: Bearer SEU_TOKEN_JWT
+```
+
+Substitua `SEU_TOKEN_JWT` pelo token recebido no login.
+
+### Exemplo: criar um projeto
+
+**Endpoint:**
+
+```http
+POST /api/projetos/criar.php
+```
+
+**Corpo da requisição:**
+
+```json
+{
+  "titulo": "Meu projeto",
+  "descricao": "Descrição do projeto",
+  "repositorio_url": "https://github.com/HenriqueC-r",
+  "demo_url": "https://example.com"
+}
+```
+
+**Exemplo de resposta:**
+
+```json
+{
+  "status": true,
+  "mensagem": "Projeto criado com sucesso.",
+  "projeto_id": 1
+}
+```
+
+*Observação: confira o formato exato das respostas no código da API, pois ele pode variar conforme a implementação.*
+
+## 🧪 Testes realizados
+
+Os principais fluxos foram testados manualmente utilizando o Insomnia:
+
+- Cadastro de usuários
+- Login e geração de token JWT
+- Consulta de perfil autenticado
+- Criação e listagem de projetos
+- Início e encerramento de cronômetros
+- Cálculo do tempo acumulado por projeto
+
+## 🐳 Infraestrutura Docker
+
+O ambiente utiliza Docker Compose para executar:
+
+- **Aplicação:** PHP 8.3 com Apache
+- **Banco de dados:** MySQL 8.4
+- **Persistência:** volume Docker para os dados do banco
+- **Configuração:** variáveis de ambiente
+
+## 🗺️ Próximos passos
+
+- Desenvolvimento do frontend
+- Expansão da documentação dos endpoints
+- Implementação de testes automatizados
+- Melhorias contínuas na validação e no tratamento de erros
+
+## 👨‍💻 Autor
+
+**Caio Henrique Ramos**
+
+- GitHub: [HenriqueC-r](https://github.com/HenriqueC-r)
+
+---
+
+Projeto desenvolvido para aprendizado prático de desenvolvimento backend e engenharia de software.
